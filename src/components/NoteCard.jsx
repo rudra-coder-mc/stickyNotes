@@ -1,9 +1,10 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useContext } from "react";
 import Trash from "../icons/Trash";
 import { setNewOffset, autoGrow, setZIndex, bodyParser } from "../utils.js";
 import { db } from "../appwrite/databases.js";
 import Spinner from "../icons/Spinner.jsx";
 import DeleteButton from "./DeleteButton.jsx";
+import { NoteContext } from "../context/NoteContext.jsx";
 
 const NoteCard = ({ note }) => {
   const body = bodyParser(note.body);
@@ -53,6 +54,8 @@ const NoteCard = ({ note }) => {
     saveData("position", newPosition);
   };
 
+  const { setSelectedNote } = useContext(NoteContext);
+
   const mouseDown = (e) => {
     if (e.target.className === "card-header") {
       setZIndex(cardRef.current);
@@ -62,6 +65,7 @@ const NoteCard = ({ note }) => {
 
       document.addEventListener("mousemove", mouseMove);
       document.addEventListener("mouseup", mouseUp);
+      setSelectedNote(note);
     }
   };
 
@@ -117,6 +121,7 @@ const NoteCard = ({ note }) => {
           onKeyUp={handleKeyUp}
           onFocus={() => {
             setZIndex(cardRef.current);
+            setSelectedNote(note);
           }}
           onInput={() => {
             autoGrow(textAreaRef);
